@@ -1,0 +1,46 @@
+<!-- https://www.html5rocks.com/en/tutorials/getusermedia/intro/ -->
+
+<div id="screenshot" style="text-align:center;">
+	<video class="videostream" autoplay=""></video>
+	<img id="screenshot-img">
+	<p><button class="capture-button">Capture video</button>
+	<button id="screenshot-button" disabled="">Take screenshot</button></p>
+</div>
+
+<script>
+	const captureVideoButton = document.querySelector('#screenshot .capture-button');
+const screenshotButton = document.querySelector('#screenshot-button');
+const img = document.querySelector('#screenshot img');
+const video = document.querySelector('#screenshot video');
+
+const canvas = document.createElement('canvas');
+const constraints={video: true,audio: true}
+
+const hdConstraints = {
+	  video: {width: {min: 1280}, height: {min: 720}}
+};
+
+
+captureVideoButton.onclick = function() {
+	navigator.mediaDevices.getUserMedia(constraints).
+		then(handleSuccess).catch(handleError);
+};
+
+screenshotButton.onclick = video.onclick = function() {
+	canvas.width = video.videoWidth;
+	canvas.height = video.videoHeight;
+	canvas.getContext('2d').drawImage(video, 0, 0);
+	// Other browsers will fall back to image/png
+	img.src = canvas.toDataURL('image/webp');
+};
+
+function handleSuccess(stream) {
+	screenshotButton.disabled = false;
+	video.srcObject = stream;
+}
+
+function handleError(error) {
+	  console.error('navigator.getUserMedia error: ', error);
+}
+
+</script>
